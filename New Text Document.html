@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Rivals Script</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            color: white;
+            background:
+                radial-gradient(circle at 20% 20%, #6c2cff33, transparent 30%),
+                radial-gradient(circle at 80% 80%, #5865f222, transparent 30%),
+                #070711;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 450px;
+            height: 450px;
+            background: #7c3cff22;
+            filter: blur(100px);
+            border-radius: 50%;
+            top: -150px;
+            left: -150px;
+            z-index: -1;
+            animation: float 8s infinite alternate ease-in-out;
+        }
+
+        @keyframes float {
+            to {
+                transform: translate(180px, 120px);
+            }
+        }
+
+        nav {
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ffffff12;
+            background: #080811aa;
+            backdrop-filter: blur(15px);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: #8b5cf6;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #22c55e;
+        }
+
+        .hero {
+            max-width: 1000px;
+            margin: auto;
+            padding: 100px 25px 60px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border: 1px solid #8b5cf655;
+            border-radius: 50px;
+            color: #b99cff;
+            background: #8b5cf611;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: clamp(50px, 9vw, 90px);
+            line-height: .95;
+            font-weight: 900;
+            background: linear-gradient(
+                90deg,
+                #ffffff,
+                #a78bfa,
+                #38bdf8,
+                #ffffff
+            );
+            background-size: 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradient 6s infinite linear;
+        }
+
+        @keyframes gradient {
+            from {
+                background-position: 0%;
+            }
+
+            to {
+                background-position: 300%;
+            }
+        }
+
+        .subtitle {
+            max-width: 650px;
+            margin: 25px auto;
+            color: #999;
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
+        /* CODE BOX */
+
+        .code-card {
+            max-width: 900px;
+            margin: 45px auto;
+            background: #0d0d18ee;
+            border: 1px solid #ffffff15;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow:
+                0 30px 80px #00000077,
+                0 0 60px #7c3cff12;
+            text-align: left;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 18px;
+            background: #11111d;
+            border-bottom: 1px solid #ffffff10;
+        }
+
+        .window-buttons {
+            display: flex;
+            gap: 7px;
+        }
+
+        .window-buttons span {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .red {
+            background: #ff5f57;
+        }
+
+        .yellow {
+            background: #febc2e;
+        }
+
+        .green {
+            background: #28c840;
+        }
+
+        .filename {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .copy-btn {
+            border: none;
+            color: white;
+            background: linear-gradient(135deg, #7c3aed, #2563eb);
+            padding: 9px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: .25s;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px #7c3aed55;
+        }
+
+        pre {
+            padding: 30px;
+            overflow-x: auto;
+            color: #d8d8e8;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .function {
+            color: #60a5fa;
+        }
+
+        .string {
+            color: #86efac;
+        }
+
+        .symbol {
+            color: #f9a8d4;
+        }
+
+        /* BUTTONS */
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 35px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            text-decoration: none;
+            color: white;
+            padding: 14px 25px;
+            border-radius: 10px;
+            border: 1px solid #ffffff18;
+            background: #ffffff08;
+            transition: .25s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            background: #ffffff12;
+        }
+
+        .primary {
+            background: linear-gradient(135deg, #7c3aed, #2563eb);
+            border: none;
+        }
+
+        /* DISCORD */
+
+        .discord {
+            max-width: 900px;
+            margin: 50px auto 80px;
+            padding: 45px 25px;
+            text-align: center;
+            border-radius: 22px;
+            border: 1px solid #5865f255;
+            background: linear-gradient(
+                135deg,
+                #5865f220,
+                #7c3aed10
+            );
+            box-shadow: 0 25px 70px #00000055;
+        }
+
+        .discord-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .discord h2 {
+            font-size: 34px;
+            margin-bottom: 12px;
+        }
+
+        .discord p {
+            max-width: 600px;
+            margin: 0 auto 25px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .discord-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background: #5865F2;
+            box-shadow: 0 10px 30px #5865f244;
+            transition: .25s;
+        }
+
+        .discord-btn:hover {
+            transform: translateY(-3px);
+            background: #4752c4;
+            box-shadow: 0 15px 35px #5865f266;
+        }
+
+        /* FEATURES */
+
+        .features {
+            max-width: 900px;
+            margin: 0 auto 80px;
+            padding: 0 25px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .feature {
+            padding: 25px;
+            border: 1px solid #ffffff10;
+            background: #ffffff05;
+            border-radius: 15px;
+            text-align: center;
+            transition: .3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-6px);
+            border-color: #8b5cf633;
+        }
+
+        .icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .feature h3 {
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            color: #888;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #555;
+            border-top: 1px solid #ffffff0a;
+        }
+
+        @media (max-width: 700px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding-top: 70px;
+            }
+
+            pre {
+                font-size: 12px;
+                padding: 20px;
+            }
+
+            .discord {
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav>
+        <div class="logo">
+            RIVALS <span>SCRIPT</span>
+        </div>
+
+        <div class="status">
+            <div class="dot"></div>
+            Online
+        </div>
+    </nav>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="badge">
+            ⚡ RIVALS SCRIPT
+        </div>
+
+        <h1>
+            RIVALS<br>SCRIPT
+        </h1>
+
+        <p class="subtitle">
+            Welcome to Rivals Script — your futuristic hub
+            for your Roblox Lua code and community.
+        </p>
+
+
+        <!-- CODE -->
+
+        <div class="code-card">
+
+            <div class="code-header">
+
+                <div class="window-buttons">
+                    <span class="red"></span>
+                    <span class="yellow"></span>
+                    <span class="green"></span>
+                </div>
+
+                <div class="filename">
+                    rivals.lua
+                </div>
+
+                <button class="copy-btn" onclick="copyCode()">
+                    Copy Code
+                </button>
+
+            </div>
+
+            <pre><code><span class="function">loadstring</span><span class="symbol">(</span><span class="function">game</span><span class="symbol">:</span><span class="function">HttpGet</span><span class="symbol">(</span><span class="string">"https://pastefy.app/YiGY38uo/raw"</span><span class="symbol">))()</span></code></pre>
+
+        </div>
+
+
+        <!-- ACTION BUTTONS -->
+
+        <div class="actions">
+
+            <a
+                class="btn primary"
+                href="https://pastefy.app/YiGY38uo/raw"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                View Source
+            </a>
+
+            <a
+                class="btn"
+                href="#"
+                onclick="copyCode(); return false;"
+            >
+                Copy Script
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- DISCORD -->
+
+    <section class="discord">
+
+        <div class="discord-icon">
+            💬
+        </div>
+
+        <h2>
+            Join Our Discord
+        </h2>
+
+        <p>
+            Join the official Rivals Script community for
+            updates, announcements, support and more.
+        </p>
+
+        <a
+            class="discord-btn"
+            href="https://discord.gg/a4KJrbc2QS"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            💬 Join Discord
+        </a>
+
+    </section>
+
+
+    <!-- FEATURES -->
+
+    <section class="features">
+
+        <div class="feature">
+            <div class="icon">⚡</div>
+            <h3>Fast</h3>
+            <p>
+                Lightweight and quick-loading interface.
+            </p>
+        </div>
+
+        <div class="feature">
+            <div class="icon">🎮</div>
+            <h3>Rivals Style</h3>
+            <p>
+                A dark futuristic gaming-inspired design.
+            </p>
+        </div>
+
+        <div class="feature">
+            <div class="icon">📋</div>
+            <h3>Easy Copy</h3>
+            <p>
+                Copy your code instantly with one click.
+            </p>
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+        © 2026 Rivals Script — All Rights Reserved.
+    </footer>
+
+
+    <script>
+
+        function copyCode() {
+
+            const code =
+                'loadstring(game:HttpGet("https://pastefy.app/YiGY38uo/raw"))()';
+
+            navigator.clipboard.writeText(code)
+                .then(() => {
+
+                    const button =
+                        document.querySelector(".copy-btn");
+
+                    const oldText = button.innerText;
+
+                    button.innerText = "✓ Copied!";
+
+                    setTimeout(() => {
+                        button.innerText = oldText;
+                    }, 1500);
+
+                })
+                .catch(() => {
+
+                    alert(
+                        "Copy failed. Please copy the code manually."
+                    );
+
+                });
+        }
+
+    </script>
+
+</body>
+</html>
